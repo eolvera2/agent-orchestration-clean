@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <h1>Project Pulse</h1>
+        <p>A quick snapshot of project health, ownership, and recent momentum.</p>
+      </header>
+
+      <section class="project-grid" aria-label="Project status cards"></section>
+
+      <p class="empty-state" hidden>No projects yet.</p>
+      <p class="error-state" role="alert" hidden></p>
+    </main>
+
+    <script>
+      const projectGrid = document.querySelector('.project-grid');
+      const emptyState = document.querySelector('.empty-state');
+      const errorState = document.querySelector('.error-state');
+
+      function toModifierClass(prefix, value) {
+        const modifier = String(value || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+
+        return modifier ? `${prefix}-${modifier}` : `${prefix}-unknown`;
+      }
+
+      function appendLabeledText(card, label, value, className) {
+        const paragraph = document.createElement('p');
+
+        if (className) {
+          paragraph.classList.add(className);
+        }
+
+        const labelElement = document.createElement('span');
+        labelElement.textContent = `${label}: `;
+
+        const valueElement = document.createElement('span');
+        valueElement.textContent = value || 'Not provided';
+
+        paragraph.append(labelElement, valueElement);
+        card.appendChild(paragraph);
+      }
+
+      function createProjectCard(project) {
+        const card = document.createElement('article');
+        card.classList.add(
+          'project-card',
+          toModifierClass('status', project.status),
+          toModifierClass('priority', project.priority)
+        );
+
+        const heading = document.createElement('h2');
+        heading.textContent = project.name || 'Untitled project';
+        card.appendChild(heading);
+
+        appendLabeledText(card, 'Owner', project.owner);
+
+        const statusParagraph = document.createElement('p');
+        const statusLabel = document.createElement('span');
+        statusLabel.textContent = 'Status: ';
+
+        const statusBadge = document.createElement('span');
+        statusBadge.classList.add('status-badge');
+        statusBadge.textContent = project.status || 'Not provided';
+
+        statusParagraph.append(statusLabel, statusBadge);
+        card.appendChild(statusParagraph);
+
+        appendLabeledText(card, 'Recent activity', project.recentActivity);
+        appendLabeledText(card, 'Priority', project.priority, 'priority-label');
+
+        return card;
+      }
+
+      function renderProjects(projects) {
+        projectGrid.replaceChildren();
+        errorState.hidden = true;
+
+        if (!Array.isArray(projects) || projects.length === 0) {
+          emptyState.hidden = false;
+          return;
+        }
+
+        emptyState.hidden = true;
+        const fragment = document.createDocumentFragment();
+
+        projects.forEach((project) => {
+          fragment.appendChild(createProjectCard(project));
+        });
+
+        projectGrid.appendChild(fragment);
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch('project-data.json');
+
+          if (!response.ok) {
+            throw new Error(`Project data request failed with status ${response.status}.`);
+          }
+
+          const data = await response.json();
+          renderProjects(data.projects);
+        } catch (error) {
+          projectGrid.replaceChildren();
+          emptyState.hidden = true;
+          errorState.textContent = 'Unable to load project data. Please try again later.';
+          errorState.hidden = false;
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "projects": [
+    {
+      "name": "Customer Insights Portal",
+      "owner": "Maya Chen",
+      "status": "On Track",
+      "recentActivity": "Completed usability testing and queued dashboard refinements for review.",
+      "priority": "High"
+    },
+    {
+      "name": "Mobile Checkout Refresh",
+      "owner": "Jordan Patel",
+      "status": "At Risk",
+      "recentActivity": "Payment provider integration needs an updated security approval before release.",
+      "priority": "Medium"
+    },
+    {
+      "name": "Data Warehouse Migration",
+      "owner": "Sam Rivera",
+      "status": "Blocked",
+      "recentActivity": "Waiting on network access changes before final load testing can begin.",
+      "priority": "High"
+    },
+    {
+      "name": "Partner Onboarding Toolkit",
+      "owner": "Avery Brooks",
+      "status": "Complete",
+      "recentActivity": "Published launch materials and handed ownership to partner success.",
+      "priority": "Low"
+    },
+    {
+      "name": "Support Knowledge Base Audit",
+      "owner": "Taylor Nguyen",
+      "status": "On Track",
+      "recentActivity": "Reviewed top-volume articles and assigned updates for outdated workflows.",
+      "priority": "Low"
+    }
+  ]
+}
